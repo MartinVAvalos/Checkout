@@ -1,16 +1,22 @@
 import { Request, Response, NextFunction } from 'express'
-import { User } from '../models/user_model'
+import { User } from '../interfaces/user'
+
 import { db } from '../utils/db'
 const firestore = db.firestore();
 
 export
 const getUsers = async (req:Request, res:Response, next:NextFunction) => {
     try {
-        console.log("Fetch All:")
+        const users:Array<User> = new Array
+
         const studentsRef = await firestore.collection('students')
         const snapshot = await studentsRef.get()
         snapshot.forEach(doc => {
-            console.log(doc.id, '=>', doc.data());
+            let user:User = { ...doc.data().User }
+            users.push(user)
+        });
+        users.forEach(element => {
+            console.log(element)
         });
     }
     catch (err) {
@@ -21,11 +27,44 @@ const getUsers = async (req:Request, res:Response, next:NextFunction) => {
 export
 const addUser = async (req:Request, res:Response, next:NextFunction) => {
     try {
-        const data = req.body;
-        await firestore.collection('students').doc().set(data);
-        res.send(JSON.stringify({"message":"success"}));
+        let body = req.body
+        if('name' in body && 'email' in body && 'address' in body) {
+            let user:User = { ...body }
+            
+            await firestore
+                .collection('students').doc()
+                .set({ 'User': { ...user } })
+
+            return res.status(200)
+                .send(JSON.stringify({'message':'Success'}))
+        }
+        return res.status(400)
+            .send(JSON.stringify({'message':'Failed. User needs: name, email, address'}))
     }
     catch(error) {
         console.log(error)
+        return res.status(500)
+            .send(JSON.stringify({"message":"Failed. Check internet"}))
+    }
+}
+
+export
+const deleteUser = async (req:Request, res:Response, next:NextFunction) => {
+    try {
+        if('id' in req.params) {
+            let id:string = req.params.id
+            await firestore
+                .collection('students').doc(id).delete()
+
+            return res.status(200)
+                .send(JSON.stringify({'message':'Success'}))
+        }
+        return res.status(400)
+            .send(JSON.stringify({'message':"Failed. Need 'id' to delete user"}))
+    }
+    catch(error) {
+        console.log(error)
+        return res.status(500)
+            .send(JSON.stringify({"message":"Failed. Check internet"}))
     }
 }

@@ -10,3 +10,19 @@ content-type: application/json
     "email": "guerovera37@icloud.com",
     "address": "500 Lakewood Center Mall, Lakewood, CA 90712"
 }
+
+###
+
+POST http://localhost:8080/user HTTP/1.1
+content-type: application/json
+
+{
+    "name":"Pamela",
+    "email": "ella@clouds.com",
+    "address": "111 Rising, Happiness, H 111"
+}
+
+###
+
+DELETE  http://localhost:8080/user/m4tlzAzDL8iFE3pjsaXq HTTP/1.1
+content-type: application/json
