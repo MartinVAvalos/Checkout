@@ -49,6 +49,29 @@ const addUser = async (req:Request, res:Response, next:NextFunction) => {
 }
 
 export
+const updateUser = async (req:Request, res:Response, next:NextFunction) => {
+    try {
+        let id:string = req.params.id
+        let body = req.body
+        if('name' in body && 'email' in body && 'address' in body) {
+            let user:User = { ...body }
+            await firestore
+                .collection('students').doc(id)
+                .update({ 'User': { ...user } })
+            return res.status(200)
+                .send(JSON.stringify({'message':'Success'}))
+        }
+        return res.status(400)
+            .send(JSON.stringify({'message':'Failed. User needs: name, email, address'}))
+    }
+    catch(error) {
+        console.log(error)
+        return res.status(500)
+            .send(JSON.stringify({"message":"Failed. Check internet or user id probably doesn't exist"}))
+    }
+}
+
+export
 const deleteUser = async (req:Request, res:Response, next:NextFunction) => {
     try {
         if('id' in req.params) {
@@ -60,7 +83,7 @@ const deleteUser = async (req:Request, res:Response, next:NextFunction) => {
                 .send(JSON.stringify({'message':'Success'}))
         }
         return res.status(400)
-            .send(JSON.stringify({'message':"Failed. Need 'id' to delete user"}))
+            .send(JSON.stringify({'message':"Failed. Need id to delete user"}))
     }
     catch(error) {
         console.log(error)

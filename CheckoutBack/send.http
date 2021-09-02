@@ -24,5 +24,16 @@ content-type: application/json
 
 ###
 
+PUT http://localhost:8080/user/donut HTTP/1.1
+content-type: application/json
+
+{
+    "name":"Emanuel",
+    "email": "eman9997@gmail.com",
+    "address": "549 E Lakewood, Lakewood, CA 90712"
+}
+
+###
+
 DELETE  http://localhost:8080/user/m4tlzAzDL8iFE3pjsaXq HTTP/1.1
 content-type: application/json
