@@ -5,7 +5,7 @@ import { db } from '../utils/db'
 const firestore = db.firestore();
 
 export
-const getUsers = async (req:Request, res:Response, next:NextFunction) => {
+const getAllUsers = async (req:Request, res:Response, next:NextFunction) => {
     try {
         const users:Array<User> = new Array
 
@@ -15,9 +15,28 @@ const getUsers = async (req:Request, res:Response, next:NextFunction) => {
             let user:User = { ...doc.data().User }
             users.push(user)
         });
-        users.forEach(element => {
-            console.log(element)
-        });
+
+        return res.status(200)
+            .send(users)
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+
+export
+const getUser = async (req:Request, res:Response, next:NextFunction) => {
+    try {
+        let id:string = req.params.id
+
+        const studentRef = await firestore.collection('students').doc(id)
+        const doc = await studentRef.get()
+        if(!doc.exists) {
+            return null
+        }
+        let user:User = doc.data()!.User
+        return res.status(200)
+            .send(user)
     }
     catch (err) {
         console.log(err)
